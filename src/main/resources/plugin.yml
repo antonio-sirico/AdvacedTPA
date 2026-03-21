@@ -1,0 +1,45 @@
+name: AdvancedTPA
+version: 1.0.0
+main: it.siryq.advancedtpa.AdvancedTPA
+api-version: '1.21'
+author: Antonio
+description: Un plugin di teletrasporto avanzato con particelle, suoni e bottoni interattivi.
+
+commands:
+  tpa:
+    description: Invia una richiesta di teletrasporto a un giocatore.
+    usage: /tpa <giocatore>
+    permission: advancedtpa.tpa
+  tpahere:
+    description: Chiedi a un giocatore di teletrasportarsi da te.
+    usage: /tpahere <giocatore>
+    permission: advancedtpa.tpahere
+  tpaccept:
+    description: Accetta una richiesta di teletrasporto in sospeso.
+    usage: /tpaccept
+    permission: advancedtpa.tpaccept
+  tpadeny:
+    description: Rifiuta una richiesta di teletrasporto in sospeso.
+    usage: /tpadeny
+    permission: advancedtpa.tpadeny
+  tpareload:
+    description: Ricarica la configurazione e i messaggi del plugin.
+    usage: /tpareload
+    permission: advancedtpa.admin
+
+permissions:
+  advancedtpa.tpa:
+    description: Permette di usare il comando /tpa.
+    default: true
+  advancedtpa.tpahere:
+    description: Permette di usare il comando /tpahere.
+    default: true
+  advancedtpa.tpaccept:
+    description: Permette di accettare le richieste di TPA.
+    default: true
+  advancedtpa.tpadeny:
+    description: Permette di rifiutare le richieste di TPA.
+    default: true
+  advancedtpa.admin:
+    description: Permette di ricaricare il plugin e gestire le impostazioni.
+    default: op

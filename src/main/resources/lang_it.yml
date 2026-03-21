@@ -1,0 +1,42 @@
+# ==========================================
+# AdvancedTPA - File di Lingua Italiana
+# ==========================================
+
+# Messaggi di Sistema
+prefix: "&b&lTPA &8» &r"
+only-players: "&cSolo i giocatori possono usare questo comando."
+no-permission: "&cNon hai i permessi per farlo."
+player-not-found: "&cGiocatore non trovato o offline."
+no-self-tpa: "&cNon puoi inviare una richiesta a te stesso!"
+sender-offline: "&cIl giocatore che ha inviato la richiesta non è più online."
+no-pending-requests: "&cNon hai richieste di teletrasporto in sospeso."
+no-request-to-deny: "&cNon hai richieste da rifiutare."
+reload-success: "&aConfigurazione e messaggi ricaricati!"
+
+# Messaggi per /tpa (Mittente va da Destinatario)
+tpa-usage: "&cUtilizzo: /tpa <giocatore>"
+request-sent: "&aRichiesta inviata a &e%player%&a."
+request-received: "&e%player% &avuole teletrasportarsi da te."
+
+# Messaggi per /tpahere (Destinatario va da Mittente)
+tpahere-usage: "&cUtilizzo: /tpahere <giocatore>"
+tpahere-sent: "&aHai chiesto a &e%player% &adi venire da te."
+tpahere-received: "&e%player% &avuole che tu vada da lui."
+
+# Sistema di Bottoni Cliccabili
+accept-button: "&a&l✔ ACCETTA"
+deny-button: "&c&l✖ RIFIUTA"
+accept-hover: "&7(/tpaccept)"
+deny-hover: "&7(/tpadeny)"
+
+# Esito richieste
+teleport-countdown: "&aTeletrasporto tra &e%seconds% &asecondi... non muoverti!"
+teleport-cancelled-move: "&cTeletrasporto annullato! Ti sei mosso."
+request-accepted: "&aHai accettato la richiesta di &e%player%&a."
+teleporting: "&aTeletrasporto in corso verso &e%player%&a..."
+request-denied-target: "&cHai rifiutato la richiesta di &e%player%&c."
+request-denied-sender: "&e%player% &cha rifiutato la tua richiesta."
+
+# Scadenza
+request-expired-sender: "&cLa tua richiesta è scaduta."
+request-expired-target: "&cLa richiesta di &e%player% &cè scaduta."

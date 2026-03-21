@@ -1,0 +1,46 @@
+# Imposta la lingua del plugin (lang_it.yml, lang_en.yml, ecc.)
+language: "it"
+
+# Tempo di scadenza della richiesta in secondi
+timeout: 60
+
+# Tempo di attesa prima del teletrasporto (in secondi)
+teleport-delay: 5
+
+# Configurazione Suoni (1.21.11)
+# Lista suoni: https://jd.papermc.io/paper/1.21.11/org/bukkit/Sound.html
+sounds:
+  # Quando riceve una richiesta
+  request-received: "block.note_block.pling"
+  # Quando il teletrasporto avviene con successo
+  teleport-success: "entity.enderman.teleport"
+  # Quando il teletrasporto viene accettato
+  request-accepted: "entity.experience_orb.pickup"
+  # Quando il teletrasporto viene rifiutato
+  request-denied: "block.anvil.land"
+  # Quando il teletrasporto viene annullato (movimento/danno)
+  teleport-cancelled: "block.anvil.land"
+  # Mentre il countdown è in corso
+  teleport-countdown: "ui.button.click"
+
+  volume: 1.0
+  pitch: 1.0
+
+# ==========================================
+# Configurazione Particelle (v1.21.11)
+# Lista completa: https://jd.papermc.io/paper/1.21.1/org/bukkit/Particle.html
+# ==========================================
+particles:
+  # Mentre il countdown è in corso (attorno al player)
+  teleport-countdown: "portal"
+  # Quando il teletrasporto avviene con successo
+  teleport-success: "reverse_portal"
+  # Quando il teletrasporto viene annullato (movimento/danno)
+  teleport-cancelled: "smoke"
+  # Quando la richiesta viene rifiutata
+  request-denied: "large_smoke"
+
+  # Quante particelle generare per ogni effetto
+  amount: 20
+  # Area di diffusione (0.5 = mezzo blocco attorno al player)
+  offset: 0.5
