@@ -1,6 +1,7 @@
 package me.siryq.advancedtpa;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -89,9 +90,22 @@ public class AdvancedTPA extends JavaPlugin {
     }
 
     private void pluginEnabledMessage() {
-        getLogger().info("╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼");
-        getLogger().info(" AdvancedTPA abilitato correttamente! ");
-        getLogger().info(" Versione: 1.21.11 - By Antonio        ");
-        getLogger().info("╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼");
+        // Usiamo il ConsoleSender di Bukkit con il Serializer per i colori
+        org.bukkit.command.ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+        // Definiamo i messaggi usando i codici & per comodità
+        String[] banner = {
+                "&b&l╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼",
+                "",
+                " &b&lAdvancedTPA &a&labilitato correttamente! ",
+                " &f&lVersione: 1.0.1 - &4&lBy Antonio        ",
+                "",
+                "&b&l╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼"
+        };
+
+        // Inviamo ogni riga alla console convertendo i colori
+        for (String line : banner) {
+            console.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(line));
+        }
     }
 }

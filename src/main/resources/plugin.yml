@@ -1,6 +1,6 @@
 name: AdvancedTPA
-version: 1.0.0
-main: it.siryq.advancedtpa.AdvancedTPA
+version: 1.0.1
+main: me.siryq.advancedtpa.AdvancedTPA
 api-version: '1.21'
 author: Antonio
 description: Un plugin di teletrasporto avanzato con particelle, suoni e bottoni interattivi.

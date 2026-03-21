@@ -29,7 +29,9 @@ public class TpaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player p)) {
-            sender.sendMessage(plugin.getMessage("only-players"));
+            String msg = plugin.getPrefix() + plugin.getMessage("only-players");
+            // Traduciamo i codici & in § così la console di Paper li colora correttamente
+            sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
             return true;
         }
 
