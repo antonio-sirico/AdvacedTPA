@@ -1,0 +1,42 @@
+# ==========================================
+# AdvancedTPA - English Language File
+# ==========================================
+
+# System Messages
+prefix: "&b&lTPA &8» &r"
+only-players: "&cOnly players can use this command."
+no-permission: "&cYou do not have permission to do this."
+player-not-found: "&cPlayer not found or offline."
+no-self-tpa: "&cYou cannot send a request to yourself!"
+sender-offline: "&cThe player who sent the request is no longer online."
+no-pending-requests: "&cYou have no pending teleport requests."
+no-request-to-deny: "&cYou have no requests to deny."
+reload-success: "&aConfiguration and messages reloaded!"
+
+# Messages for /tpa (Sender goes to Target)
+tpa-usage: "&cUsage: /tpa <player>"
+request-sent: "&aRequest sent to &e%player%&a."
+request-received: "&e%player% &awants to teleport to you."
+
+# Messages for /tpahere (Target goes to Sender)
+tpahere-usage: "&cUsage: /tpahere <player>"
+tpahere-sent: "&aYou asked &e%player% &ato come to you."
+tpahere-received: "&e%player% &awants you to teleport to them."
+
+# Clickable Button System
+accept-button: "&a&l✔ ACCEPT"
+deny-button: "&c&l✖ DENY"
+accept-hover: "&7(/tpaccept)"
+deny-hover: "&7(/tpadeny)"
+
+# Request Outcome
+teleport-countdown: "&aTeleporting in &e%seconds% &aseconds... do not move!"
+teleport-cancelled-move: "&cTeleport cancelled! You moved."
+request-accepted: "&aYou accepted &e%player%&a's request."
+teleporting: "&aTeleporting to &e%player%&a..."
+request-denied-target: "&cYou denied &e%player%&c's request."
+request-denied-sender: "&e%player% &crejected your request."
+
+# Expiration
+request-expired-sender: "&cYour request has expired."
+request-expired-target: "&cThe request from &e%player% &chas expired."

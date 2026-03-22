@@ -9,13 +9,16 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
-public class TpaCommand implements CommandExecutor {
+public class TpaCommand implements CommandExecutor, TabCompleter {
 
     private final AdvancedTPA plugin;
     // Mappe per le richieste: Destinatario -> Mittente
@@ -26,11 +29,12 @@ public class TpaCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    // Metodo che gestisce tutti i comandi del TPA
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Controllo se il mittente è un giocatore
         if (!(sender instanceof Player p)) {
             String msg = plugin.getPrefix() + plugin.getMessage("only-players");
-            // Traduciamo i codici & in § così la console di Paper li colora correttamente
             sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
             return true;
         }
@@ -76,7 +80,7 @@ public class TpaCommand implements CommandExecutor {
 
                 plugin.getSoundEffect().play(target, "sounds.request-received");
 
-                // AVVIO DEL TIMEOUT
+                // Avvio del Timeout configurabile
                 startTimeoutTask(targetUUID, p.getName(), cmd.equals("tpa"));
             }
 
@@ -113,13 +117,31 @@ public class TpaCommand implements CommandExecutor {
         return true;
     }
 
+    // Suggerimento nomi durante la scrittura del comando (Tab Completion)
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            String cmd = command.getName().toLowerCase();
+            if (cmd.equals("tpa") || cmd.equals("tpahere")) {
+                List<String> completions = new ArrayList<>();
+                String input = args[0].toLowerCase();
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (p.getName().toLowerCase().startsWith(input) && !p.equals(sender)) {
+                        completions.add(p.getName());
+                    }
+                }
+                return completions;
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    // Metodo che gestisce il timeout del TPA
     private void startTimeoutTask(UUID targetUUID, String senderName, boolean isTpa) {
         int timeoutTicks = plugin.getConfig().getInt("timeout", 60) * 20;
-
         new BukkitRunnable() {
             @Override
             public void run() {
-                // Controlliamo se la richiesta è ancora presente dopo il tempo scaduto
                 if (isTpa) {
                     if (tpaRequests.containsKey(targetUUID)) {
                         tpaRequests.remove(targetUUID);
@@ -135,10 +157,10 @@ public class TpaCommand implements CommandExecutor {
         }.runTaskLater(plugin, timeoutTicks);
     }
 
+    // Metodo che manda il messaggio di timeout
     private void notifyTimeout(UUID targetUUID, String senderName) {
         Player target = Bukkit.getPlayer(targetUUID);
         Player sender = Bukkit.getPlayer(senderName);
-
         if (target != null && target.isOnline()) {
             target.sendMessage(format(plugin.getMessage("request-expired-target").replace("%player%", senderName)));
         }
@@ -147,19 +169,24 @@ public class TpaCommand implements CommandExecutor {
         }
     }
 
+    // Metodo che gestisce i messaggi cliccabili
     private void sendClickableRequest(Player target, String senderName, String langKey) {
         Component message = format(plugin.getMessage(langKey).replace("%player%", senderName));
-        Component acceptBtn = format(plugin.getMessage("accept-button"))
+
+        // Bottoni e Hover usano formatSimple per NON avere il prefisso ripetuto
+        Component acceptBtn = formatSimple(plugin.getMessage("accept-button"))
                 .clickEvent(ClickEvent.runCommand("/tpaccept"))
-                .hoverEvent(HoverEvent.showText(format(plugin.getMessage("accept-hover"))));
-        Component denyBtn = format(plugin.getMessage("deny-button"))
+                .hoverEvent(HoverEvent.showText(formatSimple(plugin.getMessage("accept-hover"))));
+
+        Component denyBtn = formatSimple(plugin.getMessage("deny-button"))
                 .clickEvent(ClickEvent.runCommand("/tpadeny"))
-                .hoverEvent(HoverEvent.showText(format(plugin.getMessage("deny-hover"))));
+                .hoverEvent(HoverEvent.showText(formatSimple(plugin.getMessage("deny-hover"))));
 
         target.sendMessage(message);
         target.sendMessage(acceptBtn.append(Component.text("   ")).append(denyBtn));
     }
 
+    // Metodo che gestisce il teletrasporto
     private void executeTeleport(UUID requesterUUID, Player target, boolean requesterMoves) {
         Player requester = Bukkit.getPlayer(requesterUUID);
         if (requester == null) return;
@@ -177,7 +204,6 @@ public class TpaCommand implements CommandExecutor {
             public void run() {
                 if (!jumper.isOnline() || !destination.isOnline()) { this.cancel(); return; }
 
-                // Controllo movimento
                 if (jumper.getLocation().distanceSquared(startLoc) > 0.01) {
                     jumper.sendMessage(format(plugin.getMessage("teleport-cancelled-move")));
                     plugin.getSoundEffect().play(jumper, "sounds.teleport-cancelled");
@@ -186,7 +212,8 @@ public class TpaCommand implements CommandExecutor {
                 }
 
                 if (timeLeft > 0) {
-                    jumper.sendMessage(format(plugin.getMessage("teleport-countdown").replace("%seconds%", String.valueOf(timeLeft))));
+                    // Countdown senza prefisso per non intasare la chat
+                    jumper.sendMessage(formatSimple(plugin.getMessage("teleport-countdown").replace("%seconds%", String.valueOf(timeLeft))));
                     plugin.getSoundEffect().play(jumper, "sounds.teleport-countdown");
                     plugin.getParticleEffect().spawn(jumper, "particles.teleport-countdown");
                     timeLeft--;
@@ -201,7 +228,13 @@ public class TpaCommand implements CommandExecutor {
         }.runTaskTimer(plugin, 0, 20);
     }
 
+    // Aggiunge il prefisso (per messaggi chat standard)
     private Component format(String text) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(plugin.getPrefix() + text);
+    }
+
+    // NON aggiunge il prefisso
+    private Component formatSimple(String text) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
     }
 }

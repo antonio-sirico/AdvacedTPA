@@ -31,6 +31,10 @@ public class AdvancedTPA extends JavaPlugin {
         getCommand("tpaccept").setExecutor(tpaExecutor);
         getCommand("tpadeny").setExecutor(tpaExecutor);
 
+        // TAB COMPLETER (suggerimento nome)
+        getCommand("tpa").setTabCompleter(tpaExecutor);
+        getCommand("tpahere").setTabCompleter(tpaExecutor);
+
         // Registrazione comando di reload
         getCommand("tpareload").setExecutor((sender, command, label, args) -> {
             if (!sender.hasPermission("advancedtpa.reload")) {
@@ -98,7 +102,7 @@ public class AdvancedTPA extends JavaPlugin {
                 "&b&l╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼",
                 "",
                 " &b&lAdvancedTPA &a&labilitato correttamente! ",
-                " &f&lVersione: 1.0.1 - &4&lBy Antonio        ",
+                " &f&lVersione: 1.1.1 - &4&lBy Antonio        ",
                 "",
                 "&b&l╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼"
         };
