@@ -4,6 +4,7 @@
 
 # System Messages
 prefix: "&b&lTPA &8» &r"
+prefix-home: "&b&lHOME &8» &r"
 only-players: "&cOnly players can use this command."
 no-permission: "&cYou do not have permission to do this."
 player-not-found: "&cPlayer not found or offline."
@@ -13,12 +14,12 @@ no-pending-requests: "&cYou have no pending teleport requests."
 no-request-to-deny: "&cYou have no requests to deny."
 reload-success: "&aConfiguration and messages reloaded!"
 
-# Messages for /tpa (Sender goes to Target)
+# /tpa Messages (Sender goes to Target)
 tpa-usage: "&cUsage: /tpa <player>"
 request-sent: "&aRequest sent to &e%player%&a."
 request-received: "&e%player% &awants to teleport to you."
 
-# Messages for /tpahere (Target goes to Sender)
+# /tpahere Messages (Target goes to Sender)
 tpahere-usage: "&cUsage: /tpahere <player>"
 tpahere-sent: "&aYou asked &e%player% &ato come to you."
 tpahere-received: "&e%player% &awants you to teleport to them."
@@ -29,14 +30,23 @@ deny-button: "&c&l✖ DENY"
 accept-hover: "&7(/tpaccept)"
 deny-hover: "&7(/tpadeny)"
 
-# Request Outcome
+# Teleport Outcomes
 teleport-countdown: "&aTeleporting in &e%seconds% &aseconds... do not move!"
 teleport-cancelled-move: "&cTeleport cancelled! You moved."
 request-accepted: "&aYou accepted &e%player%&a's request."
+teleport-success: "&aTeleport successful!"
 teleporting: "&aTeleporting to &e%player%&a..."
 request-denied-target: "&cYou denied &e%player%&c's request."
-request-denied-sender: "&e%player% &crejected your request."
+request-denied-sender: "&e%player% &chased denied your request."
 
 # Expiration
 request-expired-sender: "&cYour request has expired."
-request-expired-target: "&cThe request from &e%player% &chas expired."
+request-expired-target: "&e%player%&c's request has expired."
+
+# Home Management
+home-set: "&aHome '&e%name%&a' has been set!"
+home-deleted: "&cHome '&e%name%&c' has been deleted."
+home-teleport: "&aTeleported to '&e%name%&a'."
+home-not-found: "&cHome '&e%name%&c' does not exist."
+home-limit-reached: "&cYou have reached your maximum home limit of %limit%!"
+home-bed-missing: "&cYour bed is missing or obstructed!"

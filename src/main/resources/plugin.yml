@@ -1,5 +1,5 @@
 name: AdvancedTPA
-version: 1.1.1
+version: 1.2.0
 main: me.siryq.advancedtpa.AdvancedTPA
 api-version: '1.21'
 author: Antonio
@@ -26,6 +26,18 @@ commands:
     description: Ricarica la configurazione e i messaggi del plugin.
     usage: /tpareload
     permission: advancedtpa.admin
+  sethome:
+    description: Imposta una casa.
+    usage: /sethome <nomecasa>
+    permission: advancedtpa.sethome
+  home:
+    description: Teletrasportati a una casa o al letto.
+    usage: /home <nomecasa>
+    permission: advancedtpa.home
+  delhome:
+    description: Elimina una casa salvata.
+    usage: /delhome <nomecasa>
+    permission: advancedtpa.delhome
 
 permissions:
   advancedtpa.tpa:
@@ -40,6 +52,18 @@ permissions:
   advancedtpa.tpadeny:
     description: Permette di rifiutare le richieste di TPA.
     default: true
+  advancedtpa.sethome:
+    description: Permette di settare una casa.
+    default: true
+  advancedtpa.home:
+    description: Permette di usare le proprie case.
+    default: true
+  advancedtpa.delhome:
+    description: Permette di eliminare le proprie case.
+    default: true
+  advancedtpa.homebed:
+    description: Permette di teletrasportarsi al letto.
+    default: op
   advancedtpa.admin:
     description: Permette di ricaricare il plugin e gestire le impostazioni.
     default: op

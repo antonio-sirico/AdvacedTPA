@@ -3,9 +3,7 @@ package me.siryq.advancedtpa;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,47 +19,46 @@ import java.util.UUID;
 public class TpaCommand implements CommandExecutor, TabCompleter {
 
     private final AdvancedTPA plugin;
+    private final TeleportManager teleportManager;
     // Mappe per le richieste: Destinatario -> Mittente
     private final HashMap<UUID, UUID> tpaRequests = new HashMap<>();
     private final HashMap<UUID, UUID> tpaHereRequests = new HashMap<>();
 
-    public TpaCommand(AdvancedTPA plugin) {
+    public TpaCommand(AdvancedTPA plugin, TeleportManager teleportManager) {
         this.plugin = plugin;
+        this.teleportManager = teleportManager;
     }
 
     // Metodo che gestisce tutti i comandi del TPA
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Controllo se il mittente è un giocatore
         if (!(sender instanceof Player p)) {
-            String msg = plugin.getPrefix() + plugin.getMessage("only-players");
-            sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(msg));
+            sender.sendMessage(ColorUtils.format(plugin, plugin.getMessage("only-players")));
             return true;
         }
 
         String cmd = command.getName().toLowerCase();
 
-        // Controllo permessi dinamico: advancedtpa.tpa, advancedtpa.tpahere, ecc.
         if (!p.hasPermission("advancedtpa." + cmd)) {
-            p.sendMessage(format(plugin.getMessage("no-permission")));
+            p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("no-permission")));
             return true;
         }
 
         switch (cmd) {
             case "tpa", "tpahere" -> {
                 if (args.length == 0) {
-                    p.sendMessage(format(plugin.getMessage(cmd + "-usage")));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage(cmd + "-usage")));
                     return true;
                 }
 
                 Player target = Bukkit.getPlayer(args[0]);
                 if (target == null || !target.isOnline()) {
-                    p.sendMessage(format(plugin.getMessage("player-not-found")));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("player-not-found")));
                     return true;
                 }
 
                 if (target.equals(p)) {
-                    p.sendMessage(format(plugin.getMessage("no-self-tpa")));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("no-self-tpa")));
                     return true;
                 }
 
@@ -70,27 +67,37 @@ public class TpaCommand implements CommandExecutor, TabCompleter {
 
                 if (cmd.equals("tpa")) {
                     tpaRequests.put(targetUUID, senderUUID);
-                    p.sendMessage(format(plugin.getMessage("request-sent").replace("%player%", target.getName())));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-sent").replace("%player%", target.getName())));
                     sendClickableRequest(target, p.getName(), "request-received");
                 } else {
                     tpaHereRequests.put(targetUUID, senderUUID);
-                    p.sendMessage(format(plugin.getMessage("tpahere-sent").replace("%player%", target.getName())));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("tpahere-sent").replace("%player%", target.getName())));
                     sendClickableRequest(target, p.getName(), "tpahere-received");
                 }
 
                 plugin.getSoundEffect().play(target, "sounds.request-received");
-
-                // Avvio del Timeout configurabile
                 startTimeoutTask(targetUUID, p.getName(), cmd.equals("tpa"));
             }
 
             case "tpaccept" -> {
                 if (tpaRequests.containsKey(p.getUniqueId())) {
-                    executeTeleport(tpaRequests.remove(p.getUniqueId()), p, true);
+                    UUID requesterUUID = tpaRequests.remove(p.getUniqueId());
+                    Player requester = Bukkit.getPlayer(requesterUUID);
+                    if (requester != null) {
+                        p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-accepted").replace("%player%", requester.getName())));
+                        plugin.getSoundEffect().play(p, "sounds.request-accepted");
+                        teleportManager.executeTeleport(requester, p);
+                    }
                 } else if (tpaHereRequests.containsKey(p.getUniqueId())) {
-                    executeTeleport(tpaHereRequests.remove(p.getUniqueId()), p, false);
+                    UUID requesterUUID = tpaHereRequests.remove(p.getUniqueId());
+                    Player requester = Bukkit.getPlayer(requesterUUID);
+                    if (requester != null) {
+                        p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-accepted").replace("%player%", requester.getName())));
+                        plugin.getSoundEffect().play(p, "sounds.request-accepted");
+                        teleportManager.executeTeleport(p, requester);
+                    }
                 } else {
-                    p.sendMessage(format(plugin.getMessage("no-pending-requests")));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("no-pending-requests")));
                 }
             }
 
@@ -100,17 +107,17 @@ public class TpaCommand implements CommandExecutor, TabCompleter {
 
                 if (requesterID != null) {
                     Player req = Bukkit.getPlayer(requesterID);
-                    p.sendMessage(format(plugin.getMessage("request-denied-target")
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-denied-target")
                             .replace("%player%", req != null ? req.getName() : "Player")));
 
                     if (req != null && req.isOnline()) {
-                        req.sendMessage(format(plugin.getMessage("request-denied-sender").replace("%player%", p.getName())));
+                        req.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-denied-sender").replace("%player%", p.getName())));
                         plugin.getSoundEffect().play(req, "sounds.request-denied");
                         plugin.getParticleEffect().spawn(req, "particles.request-denied");
                     }
                     plugin.getSoundEffect().play(p, "sounds.request-denied");
                 } else {
-                    p.sendMessage(format(plugin.getMessage("no-request-to-deny")));
+                    p.sendMessage(ColorUtils.format(plugin, plugin.getMessage("no-request-to-deny")));
                 }
             }
         }
@@ -162,79 +169,26 @@ public class TpaCommand implements CommandExecutor, TabCompleter {
         Player target = Bukkit.getPlayer(targetUUID);
         Player sender = Bukkit.getPlayer(senderName);
         if (target != null && target.isOnline()) {
-            target.sendMessage(format(plugin.getMessage("request-expired-target").replace("%player%", senderName)));
+            target.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-expired-target").replace("%player%", senderName)));
         }
         if (sender != null && sender.isOnline()) {
-            sender.sendMessage(format(plugin.getMessage("request-expired-sender")));
+            sender.sendMessage(ColorUtils.format(plugin, plugin.getMessage("request-expired-sender")));
         }
     }
 
     // Metodo che gestisce i messaggi cliccabili
     private void sendClickableRequest(Player target, String senderName, String langKey) {
-        Component message = format(plugin.getMessage(langKey).replace("%player%", senderName));
+        Component message = ColorUtils.format(plugin, plugin.getMessage(langKey).replace("%player%", senderName));
 
-        // Bottoni e Hover usano formatSimple per NON avere il prefisso ripetuto
-        Component acceptBtn = formatSimple(plugin.getMessage("accept-button"))
+        Component acceptBtn = ColorUtils.formatSimple(plugin.getMessage("accept-button"))
                 .clickEvent(ClickEvent.runCommand("/tpaccept"))
-                .hoverEvent(HoverEvent.showText(formatSimple(plugin.getMessage("accept-hover"))));
+                .hoverEvent(HoverEvent.showText(ColorUtils.formatSimple(plugin.getMessage("accept-hover"))));
 
-        Component denyBtn = formatSimple(plugin.getMessage("deny-button"))
+        Component denyBtn = ColorUtils.formatSimple(plugin.getMessage("deny-button"))
                 .clickEvent(ClickEvent.runCommand("/tpadeny"))
-                .hoverEvent(HoverEvent.showText(formatSimple(plugin.getMessage("deny-hover"))));
+                .hoverEvent(HoverEvent.showText(ColorUtils.formatSimple(plugin.getMessage("deny-hover"))));
 
         target.sendMessage(message);
         target.sendMessage(acceptBtn.append(Component.text("   ")).append(denyBtn));
-    }
-
-    // Metodo che gestisce il teletrasporto
-    private void executeTeleport(UUID requesterUUID, Player target, boolean requesterMoves) {
-        Player requester = Bukkit.getPlayer(requesterUUID);
-        if (requester == null) return;
-
-        Player jumper = requesterMoves ? requester : target;
-        Player destination = requesterMoves ? target : requester;
-        Location startLoc = jumper.getLocation();
-
-        target.sendMessage(format(plugin.getMessage("request-accepted").replace("%player%", requester.getName())));
-        plugin.getSoundEffect().play(target, "sounds.request-accepted");
-
-        new BukkitRunnable() {
-            int timeLeft = plugin.getConfig().getInt("teleport-delay", 5);
-            @Override
-            public void run() {
-                if (!jumper.isOnline() || !destination.isOnline()) { this.cancel(); return; }
-
-                if (jumper.getLocation().distanceSquared(startLoc) > 0.01) {
-                    jumper.sendMessage(format(plugin.getMessage("teleport-cancelled-move")));
-                    plugin.getSoundEffect().play(jumper, "sounds.teleport-cancelled");
-                    plugin.getParticleEffect().spawn(jumper, "particles.teleport-cancelled");
-                    this.cancel(); return;
-                }
-
-                if (timeLeft > 0) {
-                    // Countdown senza prefisso per non intasare la chat
-                    jumper.sendMessage(formatSimple(plugin.getMessage("teleport-countdown").replace("%seconds%", String.valueOf(timeLeft))));
-                    plugin.getSoundEffect().play(jumper, "sounds.teleport-countdown");
-                    plugin.getParticleEffect().spawn(jumper, "particles.teleport-countdown");
-                    timeLeft--;
-                } else {
-                    jumper.teleport(destination.getLocation());
-                    jumper.sendMessage(format(plugin.getMessage("teleporting").replace("%player%", destination.getName())));
-                    plugin.getSoundEffect().play(jumper, "sounds.teleport-success");
-                    plugin.getParticleEffect().spawn(jumper, "particles.teleport-success");
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(plugin, 0, 20);
-    }
-
-    // Aggiunge il prefisso (per messaggi chat standard)
-    private Component format(String text) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(plugin.getPrefix() + text);
-    }
-
-    // NON aggiunge il prefisso
-    private Component formatSimple(String text) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
     }
 }
