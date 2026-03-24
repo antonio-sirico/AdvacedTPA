@@ -1,9 +1,9 @@
 name: AdvancedTPA
-version: 1.2.0
+version: 1.2.1
 main: me.siryq.advancedtpa.AdvancedTPA
 api-version: '1.21'
 author: Antonio
-description: Un plugin di teletrasporto avanzato con particelle, suoni e bottoni interattivi.
+description: Un plugin di teletrasporto avanzato con particelle, suoni e messaggi cliccabili.
 
 commands:
   tpa:
@@ -63,6 +63,9 @@ permissions:
     default: true
   advancedtpa.homebed:
     description: Permette di teletrasportarsi al letto.
+    default: op
+  advancedtpa.bypassdelay:
+    description: Permette di teletrasportarsi istantaneamente.
     default: op
   advancedtpa.admin:
     description: Permette di ricaricare il plugin e gestire le impostazioni.

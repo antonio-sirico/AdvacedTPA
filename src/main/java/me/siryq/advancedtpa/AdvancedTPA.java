@@ -99,11 +99,13 @@ public class AdvancedTPA extends JavaPlugin {
     private void pluginEnabledMessage() {
         org.bukkit.command.ConsoleCommandSender console = Bukkit.getConsoleSender();
 
+        String version= getPluginMeta().getVersion();
+
         String[] banner = {
                 "&b&l╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼",
                 "",
                 " &b&lAdvancedTPA &a&labilitato correttamente! ",
-                " &f&lVersione: 1.2.0 - &4&lBy Antonio        ",
+                " &f&lVersione: " +version+ " - &4&lBy Antonio        ",
                 "",
                 "&b&l╾━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╼"
         };

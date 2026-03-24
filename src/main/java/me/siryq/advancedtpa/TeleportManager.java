@@ -42,7 +42,7 @@ public class TeleportManager {
         int delay = plugin.getConfig().getInt("teleport-delay", 5);
 
         // Se il delay è 0, teletrasportiamo istantaneamente
-        if (delay <= 0) {
+        if (delay <= 0 || jumper.hasPermission("advancedtpa.bypassdelay")) {
             performFinalTeleport(jumper, targetLocation.get(), targetName, isHome);
             return;
         }
